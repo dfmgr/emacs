@@ -59,7 +59,7 @@ APPVERSION="$(curl -LSs $REPORAW/master/version.txt)"
 # Setup plugins
 
 PLUGNAMES="doom-emacs"
-PLUGDIR="${HOME/.emacs.d/}"
+PLUGDIR="${HOME}/.emacs.d"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
