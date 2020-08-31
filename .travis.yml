@@ -8,13 +8,12 @@ sudo: enabled
 install:
 install:
   - sudo bash -c "add-apt-repository -ys ppa:nilarimogard/webupd8 ; add-apt-repository -ys ppa:kelleyk/emacs"
-  - sudo apt-get remove -yy emacs* || true
+  - sudo apt-get remove -yy emacs* || true; sudo apt install -yy emacs26-nox
   - sudo bash -c "$(curl -LSs https://github.com/dfmgr/installer/raw/master/install.sh)"
   - sudo pkmgr init
-  - pkmgr update
-  - sudo dotfiles admin scripts
-  - sudo bash -c "apt install -yy emacs26-nox"
-  - dotfiles install emacs
+  - sudo pkmgr update
+  - sudo systemmgr install installer
+  - dfmgr install emacs
   - bash -c "[ -f $(command -v emacs >/dev/null 2>&1) ] && timeout --signal=9 --foreground --preserve-status 5 emacs || true"
 
 matrix:
