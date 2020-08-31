@@ -177,7 +177,7 @@ failexitcode
 run_postinst() {
   dfmgr_run_post
   EMACSVER="$(emacs --version | head -n 1 | awk -F'[^0-9]*' '$0=$2')"
-  if [[ "$EMACSVER" -lt "26" ]]; then printf_red "Please update emacs"; exit ; fi
+  if [[ "$EMACSVER" -lt "26" ]]; then printf_red "Please update emacs"; exit 1; fi
   "$PLUGDIR/bin/doom" -y env
   "$PLUGDIR/bin/doom" -y install
   cp_rf "$APPDIR"/*.el "$CONF/doom/"
