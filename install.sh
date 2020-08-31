@@ -181,7 +181,7 @@ run_postinst() {
   "$PLUGDIR/bin/doom" -y env
   "$PLUGDIR/bin/doom" -y install --no-env --no-fonts
   cp_rf "$APPDIR"/*.el "$CONF/doom/"
-  "$PLUGDIR/bin/doom" -y refresh
+  "$PLUGDIR/bin/doom" -y sync
 }
 
 execute \
