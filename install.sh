@@ -52,7 +52,7 @@ APPNAME="${APPNAME:-emacs}"
 APPDIR="${APPDIR:-$HOME/.config/$APPNAME}"
 REPO="${DFMGRREPO:-https://github.com/dfmgr}/${APPNAME}"
 REPORAW="${REPORAW:-$REPO/raw}"
-APPVERSION="$(curl -LSs $REPORAW/master/version.txt)"
+APPVERSION="$(__appversion)"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -137,15 +137,15 @@ ensure_perms
 
 # Main progam
 
-if [ -d "$APPDIR/.git" ]; then
+if [ -d "$DOWNLOADED_TO/.git" ]; then
   execute \
-  "git_update $APPDIR" \
-  "Updating $APPNAME configurations"
+    "git_update $APPDIR" \
+    "Updating $APPNAME configurations"
 else
   execute \
-  "backupapp && \
+    "backupapp && \
         git_clone -q $REPO/$APPNAME $APPDIR" \
-  "Installing $APPNAME configurations"
+    "Installing $APPNAME configurations"
 fi
 
 # exit on fail
@@ -158,12 +158,12 @@ failexitcode
 if [ "$PLUGNAMES" != "" ]; then
   if [ -d "$HOME/.emacs.d/.git" ]; then
     execute \
-    "git_update $HOME/.emacs.d" \
-    "Updating plugin doom-emacs"
+      "git_update $HOME/.emacs.d" \
+      "Updating plugin doom-emacs"
   else
     execute \
-    "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" \
-    "Installing plugin doom-emacs"
+      "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" \
+      "Installing plugin doom-emacs"
   fi
 fi
 
@@ -177,16 +177,19 @@ failexitcode
 run_postinst() {
   dfmgr_run_post
   EMACSVER="$(emacs --version | head -n 1 | awk -F'[^0-9]*' '$0=$2')"
-  if [[ "$EMACSVER" -lt "26" ]]; then printf_red "Please update emacs"; exit 1; fi
+  if [[ "$EMACSVER" -lt "26" ]]; then
+    printf_red "Please update emacs"
+    exit 1
+  fi
   "$PLUGDIR/bin/doom" -y env
   "$PLUGDIR/bin/doom" -y install --no-env --no-fonts
-  cp_rf "$APPDIR"/*.el "$CONF/doom/"
+  cp_rf "$DOWNLOADED_TO"/*.el "$CONF/doom/"
   "$PLUGDIR/bin/doom" -y sync
 }
 
 execute \
-"run_postinst" \
-"Running post install scripts"
+  "run_postinst" \
+  "Running post install scripts"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
