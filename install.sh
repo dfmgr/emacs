@@ -155,6 +155,7 @@ failexitcode
 
 # Plugins
 
+if __am_i_online; then
 if [ "$PLUGNAMES" != "" ]; then
   if [ -d "$HOME/.emacs.d/.git" ]; then
     execute \
@@ -165,6 +166,7 @@ if [ "$PLUGNAMES" != "" ]; then
       "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" \
       "Installing plugin doom-emacs"
   fi
+fi
 fi
 
 # exit on fail
