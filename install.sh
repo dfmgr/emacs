@@ -137,6 +137,10 @@ ensure_perms
 
 # Main progam
 
+if [ -d "$APPDIR" ]; then
+  execute "backupapp $APPDIR $APPNAME" "Backing up $APPDIR"
+fi
+
 if [ -d "$DOWNLOADED_TO/.git" ]; then
   execute \
     "git_update $DOWNLOADED_TO" \
@@ -156,21 +160,21 @@ failexitcode
 # Plugins
 
 if __am_i_online; then
-if [ "$PLUGNAMES" != "" ]; then
-  if [ -d "$HOME/.emacs.d/.git" ]; then
-    execute \
-      "git_update $HOME/.emacs.d" \
-      "Updating plugin doom-emacs"
-  else
-    execute \
-      "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" \
-      "Installing plugin doom-emacs"
+  if [ "$PLUGNAMES" != "" ]; then
+    if [ -d "$HOME/.emacs.d/.git" ]; then
+      execute \
+        "git_update $HOME/.emacs.d" \
+        "Updating plugin doom-emacs"
+    else
+      execute \
+        "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" \
+        "Installing plugin doom-emacs"
+    fi
   fi
-fi
-fi
 
-# exit on fail
-failexitcode
+  # exit on fail
+  failexitcode
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -185,7 +189,7 @@ run_postinst() {
     if [ -d "$PLUGDIR/bin/doom" ]; then
       "$PLUGDIR/bin/doom" -y env
       "$PLUGDIR/bin/doom" -y install --no-env --no-fonts
-      cp_rf "$DOWNLOADED_TO"/*.el "$CONF/doom/"
+      cp_rf "$APPDIR"/*.el "$CONF/doom/"
       "$PLUGDIR/bin/doom" -y sync
     fi
   fi
