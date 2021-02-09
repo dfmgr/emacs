@@ -1,185 +1,145 @@
 #!/usr/bin/env bash
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 APPNAME="emacs"
 USER="${SUDO_USER:-${USER}}"
 HOME="${USER_HOME:-${HOME}}"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#set opts
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# @Author          : Jason
-# @Contact         : casjaysdev@casjay.net
-# @File            : install.sh
-# @Created         : Fr, Aug 28, 2020, 00:00 EST
-# @License         : WTFPL
-# @Copyright       : Copyright (c) CasjaysDev
-# @Description     : installer script for emacs
-#
+##@Version       : 020820212259-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : README.md
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Monday, Feb 08, 2021 22:59 EST
+# @File          : emacs
+# @Description   : Installer script for emacs
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Set functions
-
-SCRIPTSFUNCTURL="${SCRIPTSAPPFUNCTURL:-https://github.com/casjay-dotfiles/scripts/raw/master/functions}"
-SCRIPTSFUNCTDIR="${SCRIPTSAPPFUNCTDIR:-/usr/local/share/CasjaysDev/scripts}"
+# Import functions
+CASJAYSDEVDIR="${CASJAYSDEVDIR:-/usr/local/share/CasjaysDev/scripts}"
+SCRIPTSFUNCTDIR="${CASJAYSDEVDIR:-/usr/local/share/CasjaysDev/scripts}/functions"
 SCRIPTSFUNCTFILE="${SCRIPTSAPPFUNCTFILE:-app-installer.bash}"
-
+SCRIPTSFUNCTURL="${SCRIPTSAPPFUNCTURL:-https://github.com/dfmgr/installer/raw/master/functions}"
+connect_test() { ping -c1 1.1.1.1 &>/dev/null || curl --disable -LSs --connect-timeout 3 --retry 0 --max-time 1 1.1.1.1 2>/dev/null | grep -e "HTTP/[0123456789]" | grep -q "200" -n1 &>/dev/null; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-if [ -f "$SCRIPTSFUNCTDIR/functions/$SCRIPTSFUNCTFILE" ]; then
-  . "$SCRIPTSFUNCTDIR/functions/$SCRIPTSFUNCTFILE"
-elif [ -f "$HOME/.local/share/CasjaysDev/functions/$SCRIPTSFUNCTFILE" ]; then
-  . "$HOME/.local/share/CasjaysDev/functions/$SCRIPTSFUNCTFILE"
-else
+if [ -f "$PWD/$SCRIPTSFUNCTFILE" ]; then
+  . "$PWD/$SCRIPTSFUNCTFILE"
+elif [ -f "$SCRIPTSFUNCTDIR/$SCRIPTSFUNCTFILE" ]; then
+  . "$SCRIPTSFUNCTDIR/$SCRIPTSFUNCTFILE"
+elif connect_test; then
   curl -LSs "$SCRIPTSFUNCTURL/$SCRIPTSFUNCTFILE" -o "/tmp/$SCRIPTSFUNCTFILE" || exit 1
   . "/tmp/$SCRIPTSFUNCTFILE"
+else
+  echo "Can not load the functions file: $SCRIPTSFUNCTDIR/$SCRIPTSFUNCTFILE" 1>&2
+  exit 1
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Call the main function
 user_installdirs
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # OS Support: supported_os unsupported_oses
-
 unsupported_oses
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Make sure the scripts repo is installed
-
 scripts_check
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Defaults
 APPNAME="${APPNAME:-emacs}"
 APPDIR="${APPDIR:-$HOME/.config/$APPNAME}"
 INSTDIR="${INSTDIR}"
-REPO="${DFMGRREPO:-https://github.com/dfmgr}/${APPNAME}"
+REPO="${DFMGRREPO:-https://github.com/dfmgr/$APPNAME}"
 REPORAW="${REPORAW:-$REPO/raw}"
-APPVERSION="$(__appversion)"
-
+APPVERSION="$(__appversion "$REPORAW/master/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Setup plugins
-
 PLUGNAMES="doom-emacs"
-PLUGDIR="${HOME}/.emacs.d"
-
+PLUGDIR="$HOME/.emacs.d"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# dfmgr_install fontmgr_install iconmgr_install pkmgr_install systemmgr_install thememgr_install wallpapermgr_install
-
+# Call the dfmgr function
 dfmgr_install
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Version
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Script options IE: --help
-
+# Script options IE: --help --version
 show_optvars "$@"
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Do not update
-
-#systemmgr_noupdate
-
+#installer_noupdate
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Requires root - no point in continuing
-
 #sudoreq  # sudo required
 #sudorun  # sudo optional
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # end with a space
-
 APP="$APPNAME clang rg fdfind "
 PERL=""
 PYTH=""
 PIPS=""
 CPAN=""
 GEMS=""
-
-# install packages - useful for package that have the same name on all oses
-install_packages $APP
-
-# install required packages using file
-install_required $APP
-
-# check for perl modules and install using system package manager
-install_perl $PERL
-
-# check for python modules and install using system package manager
-install_python $PYTH
-
-# check for pip binaries and install using python package manager
-install_pip $PIPS
-
-# check for cpan binaries and install using perl package manager
-install_cpan $CPAN
-
-# check for ruby binaries and install using ruby package manager
-install_gem $GEMS
-
-# Other dependencies
-dotfilesreq git
-dotfilesreqadmin
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+# install packages - useful for package that have the same name on all oses
+install_packages "$APP"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# install required packages using file
+install_required "$APP"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# check for perl modules and install using system package manager
+install_perl "$PERL"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# check for python modules and install using system package manager
+install_python "$PYTH"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# check for pip binaries and install using python package manager
+install_pip "$PIPS"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# check for cpan binaries and install using perl package manager
+install_cpan "$CPAN"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# check for ruby binaries and install using ruby package manager
+install_gem "$GEMS"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Other dependencies
+dotfilesreq git misc
+dotfilesreqadmin
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Ensure directories exist
-
 ensure_dirs
 ensure_perms
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Main progam
-
+# Backup if needed
 if [ -d "$APPDIR" ]; then
   execute "backupapp $APPDIR $APPNAME" "Backing up $APPDIR"
 fi
-
-if [ -d "$INSTDIR/.git" ]; then
-  execute \
-    "git_update $INSTDIR" \
-    "Updating $APPNAME configurations"
-else
-  execute \
-    "git_clone $REPO/$APPNAME $INSTDIR" \
-    "Installing $APPNAME configurations"
+# Main progam
+if __am_i_online; then
+  if [ -d "$INSTDIR/.git" ]; then
+    execute "git_update $INSTDIR" "Updating $APPNAME configurations"
+  else
+    execute "git_clone $REPO/$APPNAME $INSTDIR" "Installing $APPNAME configurations"
+  fi
+  # exit on fail
+  failexitcode $? "Git has failed"
 fi
-
-# exit on fail
-failexitcode
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Plugins
-
 if __am_i_online; then
   if [ "$PLUGNAMES" != "" ]; then
     if [ -d "$HOME/.emacs.d/.git" ]; then
-      execute \
-        "git_update $HOME/.emacs.d" \
-        "Updating plugin doom-emacs"
+      execute "git_update $HOME/.emacs.d" "Updating plugin doom-emacs"
     else
-      execute \
-        "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" \
-        "Installing plugin doom-emacs"
+      execute
+      "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" "Installing plugin doom-emacs"
     fi
   fi
-
   # exit on fail
-  failexitcode
+  failexitcode $? "Git has failed"
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # run post install scripts
-
 run_postinst() {
   dfmgr_run_post
   EMACSVER="$(emacs --version | head -n 1 | awk -F'[^0-9]*' '$0=$2')"
@@ -194,20 +154,12 @@ run_postinst() {
     fi
   fi
 }
-
-execute \
-  "run_postinst" \
-  "Running post install scripts"
-
+#
+execute "run_postinst" "Running post install scripts"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # create version file
-
 dfmgr_install_version
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # exit
 run_exit
-
 # end
