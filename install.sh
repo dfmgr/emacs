@@ -62,6 +62,7 @@ PLUGDIR="$HOME/.emacs.d"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the dfmgr function
 dfmgr_install
+dfmgr_run_init
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Script options IE: --help --version
 show_optvars "$@"
