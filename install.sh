@@ -135,8 +135,7 @@ if __am_i_online; then
     if [ -d "$HOME/.emacs.d/.git" ]; then
       execute "git_update $HOME/.emacs.d" "Updating plugin doom-emacs"
     else
-      execute
-      "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" "Installing plugin doom-emacs"
+      execute "git_clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d" "Installing plugin doom-emacs"
     fi
   fi
   # exit on fail
