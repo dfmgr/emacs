@@ -149,7 +149,7 @@ run_postinst() {
   if [[ "$EMACSVER" -lt "26" ]]; then
     printf_red "Please update emacs" >&2
   else
-    if [ -d "$PLUGDIR/bin/doom" ]; then
+    if [ -f "$PLUGDIR/bin/doom" ]; then
       "$PLUGDIR/bin/doom" -y env
       "$PLUGDIR/bin/doom" -y install --no-env
       cp_rf "$APPDIR"/*.el "$CONF/doom/"
