@@ -147,12 +147,13 @@ run_postinst() {
   dfmgr_run_post
   EMACSVER="$(emacs --version | head -n 1 | awk -F'[^0-9]*' '$0=$2')"
   if [[ "$EMACSVER" -lt "26" ]]; then
-    printf_red "Please update emacs"
+    printf_red "Please update emacs" >&2
   else
     if [ -d "$PLUGDIR/bin/doom" ]; then
       "$PLUGDIR/bin/doom" -y env
-      "$PLUGDIR/bin/doom" -y install --no-env --no-fonts
+      "$PLUGDIR/bin/doom" -y install --no-env
       cp_rf "$APPDIR"/*.el "$CONF/doom/"
+      "$PLUGDIR/bin/doom" -y sync
       "$PLUGDIR/bin/doom" -y sync
     fi
   fi
