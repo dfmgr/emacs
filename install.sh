@@ -135,7 +135,6 @@ __run_pre_install() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run before primary post install function
 __run_prepost_install() {
-  set -x
 
   return ${?:-0}
 }
