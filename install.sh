@@ -175,6 +175,9 @@ RUBY_GEMS=""
 PYTHON_PIP=""
 PHP_COMPOSER=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Run custom actions
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Show a custom message after install
 __run_post_message() {
   true
@@ -201,7 +204,7 @@ __run_post_install() {
   GET_EMACSVER="$(__get_version "${SET_EMACSVER}")"
   EMACSVER="${EMACSVER:0:2}"
   if [ "$EMACSVER" -lt "27" ]; then
-    printf_red "Please update emacs and rerun installer" >&2
+    printf_red "Please update emacs and rerun installer: installed version $EMACSVER" >&2
     return 1
   elif [ ! -d "$HOME/.config/doom" ]; then
     [ -d "$HOME/.config/doom" ] || mkdir -p "$HOME/.config/doom"
